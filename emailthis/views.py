@@ -30,7 +30,12 @@ def get_email_form(request, content_type_id, object_id):
     except ObjectDoesNotExist:
         raise Http404("no such object id")
     subject=get_subject(item)
-    d={'form' : EmailEventForm(initial={'subject' : subject}),
+    user=request.user if request.user.is_authenticated() else None
+    initial={'subject' : subject}
+    if user and user.email:
+        initial['email_from']=user.email
+        
+    d={'form' : EmailEventForm(initial=initial),
        'item' : item,
        'content_type' : content_type}
     return render_to_response('emailthis/form.html', d, context_instance=RequestContext(request))
