@@ -1,0 +1,10 @@
+This is a simple email-to-a-friend application that generates an email
+form, handles its submission, persists the submission data to a
+database, and sends a templated email.  Both anonymous and registered
+users can send email.
+
+TODO:
+  * "most emailed" info.
+  * HTML email (currently plain text only).
+
+
