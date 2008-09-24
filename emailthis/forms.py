@@ -23,7 +23,7 @@ class EmailEventForm(forms.ModelForm):
                              required=True,
                              help_text="required, please separate multiple addresses with commas")
     subject=forms.CharField(label="Subject", required=True)
-    message=forms.CharField(label="Personal Message", widget=forms.Textarea)
+    message=forms.CharField(label="Personal Message", widget=forms.Textarea, required=False)
 
 
     class Meta:
