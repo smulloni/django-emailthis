@@ -20,7 +20,7 @@ class EmailEvent(models.Model):
     happened_at=models.DateTimeField(editable=False, default=datetime.datetime.now)
 
     def __unicode__(self):
-        return "%s emailed by %s to %s" % (sef.content_object,
-                                           email_from,
-                                           email_to)
+        return "%s emailed by %s to %s" % (self.content_object,
+                                           self.email_from,
+                                           self.email_to)
                                            
