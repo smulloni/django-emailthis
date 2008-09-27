@@ -15,7 +15,7 @@ from emailthis.models import EmailEvent
 def get_most_emailed(numdays=7, limit=10):
     """
     Returns the most emailed <limit> things of the last <numdays> days as a list
-    of (count, thing) tuples.
+    of (thing, count) tuples.
     """
     sql="""
     SELECT count(e.*) as cnt, e.content_type_id, e.object_id
@@ -31,4 +31,4 @@ def get_most_emailed(numdays=7, limit=10):
     c.execute(sql, (when,))
     res=c.fetchall()
     ctypes=dict((x.pk, x) for x in ContentType.objects.filter(pk__in=set(r[1] for r in res)))
-    return [(cnt, ctypes[ct].get_object_for_this_type(pk=oid)) for cnt, ct, oid in res]
+    return [(ctypes[ct].get_object_for_this_type(pk=oid), cnt) for cnt, ct, oid in res]
