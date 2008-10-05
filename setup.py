@@ -3,6 +3,26 @@ try:
 except ImportError:
     from distutils import setup
 
+description="""
+a simple email-to-a-friend application that generates an email
+form, handles its submission, persists the submission data to a
+database, and sends a templated email.  Both anonymous and registered
+users can send email.
+"""
+
+long_description=description + """
+
+This app started out as a quasi-fork of Jeff Croft's "mailfriend" app
+(http://code.google.com/p/django-mailfriend/), but the latter only
+supported registered users; this supports users of both
+the registered and unregistered varieties.
+
+Form submission is here done solely via ajax; form loading is intended
+to be handled similarly.
+
+"""
+
+version="0.1"
 
 setup(author="Jacob Smullyan",
       author_email='jsmullyan@gmail.com',
@@ -22,7 +42,7 @@ setup(author="Jacob Smullyan",
                    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
                    'Topic :: Software Development :: Libraries :: Python Modules'
       ],
-      version=VERSION,
+      version=version,
       keywords="django email",
       packages=("emailthis",),
       package_dir={'' : '.'}
