@@ -7,10 +7,17 @@ that works with unregistered or registered users.
 
 import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 import django.db
 
 from emailthis.models import EmailEvent
+
+def _safe_get_object(ctype, pk):
+    try:
+        return ctype.get_object_for_this_type(pk=pk)
+    except ObjectDoesNotExist:
+        return None
 
 def get_most_emailed(numdays=7, limit=10):
     """
@@ -31,4 +38,4 @@ def get_most_emailed(numdays=7, limit=10):
     c.execute(sql, (when,))
     res=c.fetchall()
     ctypes=dict((x.pk, x) for x in ContentType.objects.filter(pk__in=set(r[1] for r in res)))
-    return [(ctypes[ct].get_object_for_this_type(pk=oid), cnt) for cnt, ct, oid in res]
+    return [(x, y) for x, y in ((_safe_get_object(ctypes[ct], oid), cnt) for cnt, ct, oid in res) if x]
