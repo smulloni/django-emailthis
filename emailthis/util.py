@@ -1,6 +1,12 @@
 import httplib
 
-import simplejson
+try:
+    # prefer externally maintained version
+    import simplejson
+except ImportError:
+    # use bundled version
+    from django.utils import simplejson
+
 
 from django.conf import settings
 from django.http import HttpResponse
