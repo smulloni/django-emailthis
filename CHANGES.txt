@@ -1,0 +1,5 @@
+2009-10-15  Jacob Smullyan  <smulloni@smullyan.org>
+
+	* emailthis/views.py (process_email_form): deal properly with the case in which get_absolute_url() returns a full url.
+	
+

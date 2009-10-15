@@ -69,14 +69,17 @@ def process_email_form(request, content_type_id=None, object_id=None):
     cleaned=form.cleaned_data
     message_template=loader.get_template('emailthis/email_message.txt')
     site=Site.objects.get_current()
-    user=request.user if request.user.is_authenticated() else None    
+    user=request.user if request.user.is_authenticated() else None
+    url=item.get_absolute_url()
+    if not re.match('https?://', url):
+        url='http://%s%s' % (site.domain, url)
     message_context=Context(dict(
         email_from=cleaned['email_from'],
         subject=cleaned['subject'],
         message=cleaned['message'],
         site=site,
         site_url='http://%s/' % site.domain,
-        url='http://%s%s' % (site.domain, item.get_absolute_url()),
+        url=url,
         item=item,
         user=user,
         ))
