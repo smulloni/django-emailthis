@@ -1,7 +1,11 @@
 import re
 
 from django import forms
-from django.forms.fields import email_re
+try:
+    from django.core.validators import email_re    
+except ImportError:
+    # django 1.1
+    from django.forms.fields import email_re
 
 from emailthis.models import EmailEvent
 
