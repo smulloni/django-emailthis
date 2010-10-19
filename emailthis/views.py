@@ -2,6 +2,7 @@ import datetime
 import httplib
 import logging
 import re
+import smtplib
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
@@ -95,9 +96,16 @@ def process_email_form(request, content_type_id=None, object_id=None):
     
     recipients = cleaned['email_to'].split(',')
     from_address = cleaned['email_from']
-    send_mail(cleaned['subject'], message,
+    try:
+        send_mail(cleaned['subject'], message,
               from_address, recipients,
               fail_silently=False)
+    except smtplib.SMTPRecipientsRefused:
+        return render_to_json(dict(email_to=["Recipient was refused",]),
+                              status=httplib.BAD_REQUEST)
+    except smtplib.SMTPException:
+        return render_to_json(dict(top_level=["Error Sending Mail",]),
+                              status=httplib.BAD_REQUEST)
     event = form.save(commit=False)
     event.remote_ip = request.META['REMOTE_ADDR']
     event.content_type_id = content_type.pk
