@@ -37,7 +37,7 @@ def get_email_form(request, content_type_id, object_id):
     initial = {'subject' : subject}
     if user and user.email:
         initial['email_from'] = user.email
-        
+
     d={'form' : EmailEventForm(initial=initial),
        'item' : item,
        'content_type' : content_type}
@@ -74,7 +74,7 @@ def process_email_form(request, content_type_id=None, object_id=None):
         logging.debug("type of errors: %s", type(form.errors))
         return render_to_json(clean_errors(form.errors),
                               status=httplib.BAD_REQUEST)
-    
+
     cleaned = form.cleaned_data
     message_template = loader.get_template('emailthis/email_message.txt')
     site = Site.objects.get_current()
@@ -93,7 +93,7 @@ def process_email_form(request, content_type_id=None, object_id=None):
         user=user,
         ))
     message = message_template.render(message_context)
-    
+
     recipients = cleaned['email_to'].split(',')
     from_address = cleaned['email_from']
     try:
@@ -101,10 +101,11 @@ def process_email_form(request, content_type_id=None, object_id=None):
               from_address, recipients,
               fail_silently=False)
     except smtplib.SMTPRecipientsRefused:
-        return render_to_json(dict(email_to=["Recipient was refused",]),
+        return render_to_json(dict(email_to=["Recipient was refused"]),
                               status=httplib.BAD_REQUEST)
     except smtplib.SMTPException:
-        return render_to_json(dict(top_level=["Error Sending Mail",]),
+        return render_to_json(dict(top_level=["Error sending mail"]),
+                              # this error code is not really appropriate.
                               status=httplib.BAD_REQUEST)
     event = form.save(commit=False)
     event.remote_ip = request.META['REMOTE_ADDR']
@@ -121,4 +122,4 @@ except ImportError:
 else:
     get_email_form = suppress_logging_output(get_email_form)
     process_email_form = suppress_logging_output(process_email_form)
-    
+
