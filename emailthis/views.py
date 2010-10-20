@@ -15,7 +15,8 @@ from django.template import Context, RequestContext, loader
 
 from emailthis.forms import EmailEventForm
 from emailthis.models import EmailEvent
-from emailthis.util import render_to_json, get_subject, clean_errors
+from emailthis.util import render_to_json, get_subject, \
+     clean_errors, get_remote_ip
 
 
 def get_email_form(request, content_type_id, object_id):
@@ -108,7 +109,7 @@ def process_email_form(request, content_type_id=None, object_id=None):
                               # this error code is not really appropriate.
                               status=httplib.BAD_REQUEST)
     event = form.save(commit=False)
-    event.remote_ip = request.META['REMOTE_ADDR']
+    event.remote_ip = get_remote_ip(request)
     event.content_type_id = content_type.pk
     event.object_id = item.pk
     event.mailed_by = user

@@ -19,7 +19,7 @@ to be handled similarly.
 
 """
 
-version = "0.2.3"
+version = "0.2.4"
 
 setup(author="Jacob Smullyan",
       author_email='jsmullyan@gmail.com',

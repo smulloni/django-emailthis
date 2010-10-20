@@ -30,3 +30,11 @@ except AttributeError:
 
     def get_subject(item):
         return str(item)
+
+def get_remote_ip(request):
+    forward = request.META.get('HTTP_X_FORWARDED_FOR')
+    if forward:
+        ips = forward.split(',')
+        return ips[-1].strip()
+    else:
+        return request.META.get('REMOTE_ADDR')
