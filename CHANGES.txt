@@ -1,3 +1,7 @@
+2011-03-16  Jacob Smullyan  <smulloni@algernon>
+
+	* emailthis/views.py: patch from Daniel Benamy, catching a socket timeout exception in sending email.
+
 2011-03-15  Jacob Smullyan  <smulloni@algernon>
 
 	* emailthis/views.py: patch from Daniel Benamy, changing the default From email to DEFAULT_FROM_EMAIL rather than the user-supplied 

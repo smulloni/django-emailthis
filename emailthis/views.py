@@ -2,6 +2,7 @@ import httplib
 import logging
 import re
 import smtplib
+import socket
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -108,7 +109,7 @@ def process_email_form(request, content_type_id=None, object_id=None):
     except smtplib.SMTPRecipientsRefused:
         return render_to_json(dict(email_to=["Recipient was refused"]),
                               status=httplib.BAD_REQUEST)
-    except smtplib.SMTPException:
+    except (smtplib.SMTPException, socket.timeout):
         return render_to_json(dict(top_level=["Error sending mail"]),
                               # this error code is not really appropriate.
                               status=httplib.BAD_REQUEST)
