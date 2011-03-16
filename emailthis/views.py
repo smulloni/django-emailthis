@@ -1,20 +1,18 @@
-import datetime
 import httplib
 import logging
 import re
 import smtplib
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-from django.http import Http404, HttpResponseNotAllowed, \
-     HttpResponseBadRequest, HttpResponse
+from django.http import Http404, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, loader
 
 from emailthis.forms import EmailEventForm
-from emailthis.models import EmailEvent
 from emailthis.util import render_to_json, get_subject, \
      clean_errors, get_remote_ip
 
@@ -95,12 +93,18 @@ def process_email_form(request, content_type_id=None, object_id=None):
         ))
     message = message_template.render(message_context)
 
+    if getattr(settings, 'EMAILTHIS_SEND_FROM_USER', False):
+        subject = cleaned['subject']
+        from_address = cleaned['email_from']
+    else:
+        subject = "%s sent: %s" % (cleaned['email_from'], cleaned['subject'])
+        from_address = getattr(settings, 'DEFAULT_FROM_EMAIL',
+                               'webmaster@localhost')
     recipients = cleaned['email_to'].split(',')
-    from_address = cleaned['email_from']
+
     try:
-        send_mail(cleaned['subject'], message,
-              from_address, recipients,
-              fail_silently=False)
+        send_mail(subject, message, from_address, recipients,
+                  fail_silently=False)
     except smtplib.SMTPRecipientsRefused:
         return render_to_json(dict(email_to=["Recipient was refused"]),
                               status=httplib.BAD_REQUEST)
@@ -123,4 +127,3 @@ except ImportError:
 else:
     get_email_form = suppress_logging_output(get_email_form)
     process_email_form = suppress_logging_output(process_email_form)
-
