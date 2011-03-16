@@ -1,3 +1,8 @@
+2011-03-15  Jacob Smullyan  <smulloni@algernon>
+
+	* emailthis/views.py: patch from Daniel Benamy, changing the default From email to DEFAULT_FROM_EMAIL rather than the user-supplied 
+	email.  The old behavior can be turned on with the boolean EMAILTHIS_SEND_FROM_USER setting.
+
 2010-09-23  Jacob Smullyan  <smulloni@smullyan.org>
 
 	* pep8 cleanup; add max_length to form fields 
