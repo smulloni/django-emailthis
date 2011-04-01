@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, loader
@@ -102,10 +102,12 @@ def process_email_form(request, content_type_id=None, object_id=None):
         from_address = getattr(settings, 'DEFAULT_FROM_EMAIL',
                                'webmaster@localhost')
     recipients = cleaned['email_to'].split(',')
+    reply_to = cleaned['email_from']
 
+    email = EmailMessage(subject, message, from_address, recipients,
+                         headers={'Reply-To': reply_to})
     try:
-        send_mail(subject, message, from_address, recipients,
-                  fail_silently=False)
+        email.send(fail_silently=False)
     except smtplib.SMTPRecipientsRefused:
         return render_to_json(dict(email_to=["Recipient was refused"]),
                               status=httplib.BAD_REQUEST)
